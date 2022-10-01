@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ProductsMapper">
+    <select id="selectByPrice"  resultType="com.example.demo.entity.Product" >
+        select * from products
+        <where>
+            <if test="price1==null">
+                price &lt; #{price1}
+            </if>
+            <if test="price2==null">
+                AND price &gt; #{price2}
+            </if>
+        </where>
+    </select>
+    <select id="selectFilter"  resultType="com.example.demo.entity.Product">
+        SELECT * FROM products
+        <where>
+            <if test="brand!=null">
+                brand = #{brand}
+            </if>
+            <if test="price1==null">
+                AND price &lt; #{price1}
+            </if>
+            <if test="price2==null">
+                AND price &gt; #{price2}
+            </if>
+            <if test="size!=null">
+                AND size=#{size}
+            </if>
+        </where>
+        <if test="sortIndex!=null">
+            ORDER BY ${sortIndex}
+            <if test="order!=null">
+                ${order}
+            </if>
+        </if>
+    </select>
+</mapper>
