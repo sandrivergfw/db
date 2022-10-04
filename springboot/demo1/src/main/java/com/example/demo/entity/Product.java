@@ -9,5 +9,6 @@ public class Product {
     private String brand;
     private double size;//电脑尺寸
     private int sales;//销量
+    private double price;
 
 }
