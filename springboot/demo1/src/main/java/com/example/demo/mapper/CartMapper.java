@@ -11,7 +11,9 @@ public interface CartMapper {
     @Select("select * from cartinfor")
     List<Cart> findAll(); //查询所有的user select * from sys_user
 
-    @Select("select * from cartinfor where customerId=#{customerId}")
+    @Select("select cartinfor.productId, number, productName, brand, price " +
+            "from cartinfor, products " +
+            "where customerId=#{customerId} and products.productId=cartinfor.productId")
     List<Cart> findByCustomerId(@Param("customerId")int customerId);
     /**
      * 输入要求
@@ -22,8 +24,15 @@ public interface CartMapper {
     @Select("select * from cartinfor order by createTime ${order}}")
     List<Cart> orderByTimeDesc(@Param("order") String order);
 
-    @Insert("insert into cartinfor(customerId,productId,createTime)  value(#{customerId},#{productId},#{createTime})")
-    int insert(@Param("customerId")int customerId, @Param("productId")int productId, @Param("createTime")Date createTime);
+    @Insert("insert into cartinfor(customerId,productId,createTime,number)" +
+            "  value(#{customerId},#{productId},#{createTime},#{number})")
+    int insert(@Param("customerId")int customerId,
+               @Param("productId")int productId,
+               @Param("createTime")Date createTime,
+               @Param("number")int number);
+    // 检查是否已经购买
+    @Select("select * from cartinfor where customerId=#{customerId} and productId=#{productId}")
+    List<Cart> checkIfPurchased(@Param("customerId")int customerId, @Param("productId")int productId);
 
     @Delete("delete from cartinfor where customerId = #{customerId} and productId=#{productId}")
     int deleteById(@Param("customerId") int customerId,@Param("productId") int productId); //这三个id最好都一个名字

@@ -15,30 +15,31 @@ public class CartController {
     @Autowired
     private CartMapper cartMapper;
 
-    /**
-     * url传入"http:localhost/9090/cart/?customerId=要查询的customer对应的id
-     * 只有customerId是必选项，其他可以不填
-     * @param customerId
-     * @return
-     */
+    /*
     @PostMapping()
-    public List<Cart> selectByCustomerId(@Param("customerId") int customerId){
-        return cartMapper.findByCustomerId(customerId);
+    public List<Cart> selectByCustomerId(@RequestBody Cart cart){
+        //System.out.println(customerId);
+        return cartMapper.findByCustomerId(cart.getCustomerId());
+    }*/
+    @PostMapping()
+    public List<Cart> selectByCustomerId(@RequestBody Cart cart){
+        //System.out.println(customerId);
+        return cartMapper.findByCustomerId(cart.getCustomerId());
     }
 
-    /**
-     * 返回1表示插入成功
-     * @param cart
-     * @return
-     */
     @PostMapping("/add")
-    public int addToCart(@RequestBody Cart cart){
-        return cartMapper.insert(cart.getCustomerId(),cart.getProductId(), new Date());
+    public boolean addToCart(@RequestBody Cart cart){
+        return cartMapper.insert(cart.getCustomerId(),cart.getProductId(), new Date(), 1)==1;
+    }
+
+    @PostMapping("/check")
+    public boolean checkTheCart(@RequestBody Cart cart){
+        return cartMapper.checkIfPurchased(cart.getCustomerId(),cart.getProductId()).size()!=0;
     }
 
     @PostMapping("/delete")
-    public int deleteFromCart(@RequestBody Cart cart){
-        return cartMapper.deleteById(cart.getCustomerId(),cart.getProductId());
+    public boolean deleteFromCart(@RequestBody Cart cart){
+        return cartMapper.deleteById(cart.getCustomerId(),cart.getProductId())==1;
     }
 
     @PostMapping("/orderByTime")

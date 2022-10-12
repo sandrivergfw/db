@@ -101,7 +101,23 @@
               购物车
             </el-col>
           </el-row>
-
+          <div class="productBox">
+            <div
+                v-for="(o) in todos"
+                :key="o.productId"
+                class="productItem"
+            >
+              <img
+                  src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+                  class="image"
+              />
+              <span>{{o.productName}}</span>
+              <time class="time">{{ o.brand }}</time>
+              <span>￥{{o.price}}</span>
+              <span>{{o.number}}</span>
+              <el-button class="button" type="primary" @click="removeProduct(o)">移除</el-button>
+            </div>
+          </div>
         </el-main>
       </el-container>
       <el-footer>
@@ -123,6 +139,7 @@
   } from '@element-plus/icons-vue'
   import { useRouter } from 'vue-router';
   import { ref } from 'vue';
+  import axios from "axios";
 
 	const router = useRouter()
 	function goLogin() {
@@ -137,7 +154,7 @@
 	}
   function goUserPage() {
 		router.push({
-			path: '/userPage/overview'
+			path: '/userPage'
 		})
 	}
   function goHome() {
@@ -147,7 +164,7 @@
   }
   function goOverView() {
     router.push({
-			path: '/userPage/overview'
+			path: '/userPage'
 		})
   }
   function goSecurity() {
@@ -189,6 +206,39 @@
 		isActive.value = !isActive.value;
     console.log(isActive.value)
 	}
+  // 购物车展示
+  const todos = ref()
+  function removeProduct(o: any) {
+    console.log(o.id);
+    let remove_data = {
+      "customerId": localStorage.getItem('customerId'),
+      "productId": o.productId,
+    }
+    axios.post("http://localhost:9090/cart/delete", remove_data).then(res_remove=>{
+      console.log("是否已从购物车移除"+res_remove.data);
+      if (res_remove.data) {
+        let data = {
+          "customerId": localStorage.getItem('customerId'),
+        }
+        console.log(data.customerId);
+        axios.post("http://localhost:9090/cart", data).then(res=>{
+          console.log(res.data);
+          todos.value=res.data;
+          console.log(todos.value);
+        })
+      }
+    })
+  }
+
+  let data = {
+    "customerId": localStorage.getItem('customerId'),
+  }
+  console.log(data.customerId);
+  axios.post("http://localhost:9090/cart", data).then(res=>{
+    console.log(res.data);
+    todos.value=res.data;
+    console.log(todos.value);
+  })
 </script>
   
 <style lang="less" scoped>
@@ -277,32 +327,34 @@
   height: 350px;
   margin-bottom: 50px;
 }
-.card-head{
-  height: 70px;
-  background-color: rgba(10, 15, 65, 0.805);
-  .el-col {
-    color: #fff;
-    font-size: 20px;
-    position: absolute;
-	  left: 15%;
-	  top: 50%;
-	  transform: translate(-50%,-50%);
-    text-align: center;
-  }
-}
-.user-inf-box {
-  height: 280px;
-  background-color: rgba(11, 24, 75, 0.803);
-  .user-inf {
-    position: relative;
-    top: 15%;
-    height: 50px;
-    .user-inf-name {
-      color: rgb(222, 219, 219);
+
+// 购物车展示
+.productBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 800px;
+
+  .productItem {
+    width: 100%;
+    padding: 0 20px;
+    margin: 10px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    //border: 1px solid #cccccc;
+    .image {
+      height: 100px;
+      width: 100px;
+      display: inline-block;
     }
   }
+  .productItem:hover {
+    box-shadow: 0 0 10px #cccccc;
+  }
 }
-
 
 // 侧边导航栏
 .side-top-block {

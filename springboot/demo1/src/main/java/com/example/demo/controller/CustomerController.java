@@ -1,15 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Customer;
-import com.example.demo.entity.User;
+import com.example.demo.entity.OnlineCustomer;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.utils.CreateJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController  //组合注解 是GetMapping的基础
 @RequestMapping("/customer")
@@ -23,10 +22,12 @@ public class CustomerController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Customer customer){
+    public OnlineCustomer login(@RequestBody Customer customer){
         List<Customer> customers = customerMapper.login(customer.getCustomerName(), customer.getLoginPwd());
         if(customers.size()==1){
-            return CreateJwt.getToken(customer.getCustomerName(),customer.getCustomerId());
+            OnlineCustomer onCust = new OnlineCustomer(customers.get(0));
+            onCust.setToken(CreateJwt.getToken(customer.getCustomerName(),customer.getCustomerId()));
+            return onCust;
         }else {
             return null;
         }

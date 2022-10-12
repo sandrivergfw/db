@@ -1,4 +1,5 @@
 <template>
+  <router-view></router-view>
   <div class="common-layout">
     <link href="../../assets/icons/font_2cf2621a7by/iconfont.css"> 
     <el-container class="std_container">
@@ -197,7 +198,6 @@
       </el-footer>
     </el-container>
   </div>
-
 </template>
 
 <script lang="ts" setup>
@@ -223,11 +223,6 @@
 			path: '/register'
 		})
 	}
-  function goUserPage() {
-		router.push({
-			path: '/userPage/overview'
-		})
-	}
   function goHome() {
     router.push({
 			path: '/home'
@@ -235,7 +230,7 @@
   }
   function goOverView() {
     router.push({
-			path: '/userPage/overview'
+			path: '/userPage'
 		})
   }
   function goSecurity() {

@@ -17,6 +17,7 @@ public class ProductController {
 
     @GetMapping
     public List<Product> getAllProducts(){
+        System.out.println(productsMapper.findAll().getClass().toString());
         return productsMapper.findAll();
     }
 

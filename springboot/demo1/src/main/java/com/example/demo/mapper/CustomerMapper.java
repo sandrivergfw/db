@@ -18,12 +18,15 @@ public interface CustomerMapper {
     @Select("select * from customer where customerName = #{customerName} and loginPwd = #{loginPwd}")
     List<Customer> login(@Param("customerName") String customerName,@Param("loginPwd") String loginPwd);
 
-    @Insert("INSERT INTO customer(customerName,loginPwd) VALUES(#{customerName},#{loginPwd}) WHERE (select count(customerName) from customer where customerName=#{customerName}}))")
+    @Insert("INSERT INTO customer(customerName,loginPwd) " +
+            "VALUES(#{customerName},#{loginPwd}) ")
         //#{}占位符传参
     int insert(@Param("customerName") String customerName,@Param("loginPwd")String loginPwd);
 
-    @Update("UPDATE customer SET customerName=#{customerName},loginPwd=#{loginPwd},payPwd=#{payPwd}," +
-            "sex=#{sex},phone=#{phone},address=#{address},birthday=#{birthday},email=#{email} WHERE customerId=#{customerId}")
+    @Update("UPDATE customer " +
+            "SET customerName=#{customerName},loginPwd=#{loginPwd},payPwd=#{payPwd}," +
+            "sex=#{sex},phone=#{phone},address=#{address},birthday=#{birthday},email=#{email} " +
+            "WHERE customerId=#{customerId}")
     int update(Customer customer);
 
     @Delete("delete from customer where customerId = #{customerId}")
@@ -32,7 +35,5 @@ public interface CustomerMapper {
     //增删改查
     @Delete("delete from customer where customerName = #{customerName}")
     int deleteByName(@Param("customerName") int customerName); //这三个id最好都一个名字
-
-
 
 }
