@@ -12,13 +12,12 @@
 
 			<el-form 
 			:model="loginForm" :rules="loginFormRule" ref="loginFormRef" 
-			label-width="0px" class="login_form" @keyup.enter="login">
+			label-width="0px" class="login_form">
 				<!--用户名-->
 				<el-form-item prop="username">
 					<el-input 
 					v-model="loginForm.username" 
 					placeholder="User Name"
-          id="customerName"
 					>
 					<template #prefix>
             <i class="iconfont icon-yonghu_user"></i>
@@ -33,7 +32,6 @@
 					placeholder="Password"
 					show-password
 					type="password"
-          id="loginPwd"
 					>
 					<template #prefix>
             <i class="iconfont icon-mima_password"></i>
@@ -42,7 +40,7 @@
 				</el-form-item>
 				<!--按钮区域-->
 				<el-form-item class="bots">
-					<el-button type="primary" plain @click="login" :disabled="!canSubmit">登陆</el-button>
+					<el-button type="primary" plain @click="login">登陆</el-button>
 					<el-button type="info" plain @click="resetLoginForm">清除</el-button>
 					<el-button text type="primary" plain @click="goRegister">注册账户</el-button>
 				</el-form-item>
@@ -55,9 +53,8 @@
 <script setup>
 	import { ElIcon } from 'element-plus';
 	import { ElMessage, ElMessageBox } from 'element-plus';
-  import {computed, reactive} from 'vue';
+	import { reactive } from 'vue';
 	import { ref, unref } from "vue"; // 引入组件
-  import axios from "axios";
 	import { useRouter } from 'vue-router';
 
 	// 这是登陆表单的数据绑定对象
@@ -85,54 +82,15 @@
 	// 组合式api中没有this概念，使用ref和unref获取对象的引用
 	let loginFormRef = ref()
 	// 登陆
-  const canSubmit = computed(()=> {
-    const {username, password} = loginForm;
-    return Boolean(username && password);
-  })
-  function login(){
-    console.log("begin login")
-    const form = unref(loginFormRef)
-    let formValid
-    form.validate(
-        valid => {
-          console.log(valid)
-          if (!valid) formValid = "no";
-          else formValid = "yes";
-        }
-    );
-    if (formValid === "no") ElMessageBox.alert('用户或密码格式错误', 'ERROR');
-    else {
-      //定义了一个函数来执行
-      //根据input框的id来获取相关的文本值
-      let login_msg = "";
-      let data = {
-        "customerName": document.getElementById("customerName").value,
-        "loginPwd": document.getElementById("loginPwd").value
-      }
-      console.log(data)
-      axios.post('http://localhost:9090/customer/login', data).then((res) => {
-        //判断登录情况
-        console.log(res)
-        if (res.data.token !== "") {
-          login_msg = "success login,token=" + res.data.token;
-          //this.$router.push('/mainIndex')
-          localStorage.setItem('token', res.data.token); // 保存token到本地储存
-          localStorage.setItem('customerId', res.data.customerId); // 保存customerId
-          router.push({path: '/home'});
-        } else {
-          login_msg = "fail"
-        }
-        console.log(login_msg)
-        if (login_msg === "fail") ElMessageBox.alert('用户或密码错误', 'ERROR');
-        else {
-          ElMessageBox.alert('登陆成功', 'SUCCESS');
-        }
-        //回调函数 跳转到正常的页面
-      })
-      //axios发送一个post请求到指定的url
-    }
-  }
-
+	function login() {
+		const form = unref(loginFormRef)
+		form.validate(
+			valid => {
+				console.log(valid)
+				if (!valid) ElMessageBox.alert('用户或密码错误', 'ERROR');
+			}
+		);
+	}
 	// 重置
 	function resetLoginForm() {
 		const form = unref(loginFormRef)

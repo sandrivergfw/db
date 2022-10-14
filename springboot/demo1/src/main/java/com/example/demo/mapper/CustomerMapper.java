@@ -1,39 +1,52 @@
 package com.example.demo.mapper;
 
 import com.example.demo.entity.Customer;
-import com.example.demo.entity.User;
 import org.apache.ibatis.annotations.*;
-import org.springframework.web.bind.annotation.Mapping;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
 public interface CustomerMapper {
-    @Select("select * from customer")
+    @Select("select * from customers")
     List<Customer> findAll(); //查询所有的user select * from sys_user
 
-    @Select("select * from customer where customerName = #{customerName}")
+    @Select("select address from customers where customerId=#{customerId}")
+    String getAddress(int customerId);
+
+    @Select("select * from customers where customerName = #{customerName}")
     List<Customer> nameCheck(@Param("customerName") String customerName);
 
-    @Select("select * from customer where customerName = #{customerName} and loginPwd = #{loginPwd}")
+    @Select("select * from customers where customerName = #{customerName} and loginPwd = #{loginPwd}")
     List<Customer> login(@Param("customerName") String customerName,@Param("loginPwd") String loginPwd);
 
-    @Insert("INSERT INTO customer(customerName,loginPwd) " +
-            "VALUES(#{customerName},#{loginPwd}) ")
+    @Insert("INSERT INTO customers(customerName,loginPwd) VALUES(#{customerName},#{loginPwd})")
         //#{}占位符传参
     int insert(@Param("customerName") String customerName,@Param("loginPwd")String loginPwd);
 
-    @Update("UPDATE customer " +
-            "SET customerName=#{customerName},loginPwd=#{loginPwd},payPwd=#{payPwd}," +
-            "sex=#{sex},phone=#{phone},address=#{address},birthday=#{birthday},email=#{email} " +
-            "WHERE customerId=#{customerId}")
-    int update(Customer customer);
-
-    @Delete("delete from customer where customerId = #{customerId}")
+    @Delete("delete from customers where customerId = #{customerId}")
     int deleteById(@Param("customerId") int customerId); //这三个id最好都一个名字
     // 注解和动态.xml文件二选一
     //增删改查
-    @Delete("delete from customer where customerName = #{customerName}")
+    @Delete("delete from customers where customerName = #{customerName}")
     int deleteByName(@Param("customerName") int customerName); //这三个id最好都一个名字
+
+    @Select("SELECT * FROM customers where customerId= #{customerId}")
+    List<Customer> getInfo(@Param("customerId") int customerId);
+
+    int modifyInfo(@Param("customerId") int customerId,@Param("customerName") String customerName,
+                   @Param("email") String email,@Param("birthday") Date birthday,@Param("phone") String phone,@Param("address") String address);
+
+    @Select("select loginPwd from customers where customerId=#{customerId}")
+    String getPwdById(@Param("customerId") int customerId);
+
+    @Select("select loginPwd from customers where customerName=#{customerName}")
+    String getPwdByName(@Param("customerName") String customerName);
+
+    @Update("update customers set loginPwd=#{loginPwd} where customerId=#{customerId}")
+    int updatePwd(@Param("customerId") int customerId,@Param("loginPwd") String loginPwd);
+
+    @Update("update customers set picUrl=#{picUrl} where customerId=#{customerId}")
+    int updatePicUrl(@Param("picUrl") String picUrl);
 
 }

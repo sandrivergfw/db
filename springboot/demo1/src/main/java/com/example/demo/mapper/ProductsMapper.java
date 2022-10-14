@@ -13,6 +13,10 @@ import java.util.List;
 
 @Mapper
 public interface ProductsMapper {
+
+    @Select("select price from products where productId=#{productId}")
+    double getPrice(int productId);
+
     @Select("select * from products")
     List<Product> findAll();
 

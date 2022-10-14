@@ -10,14 +10,13 @@ import java.io.File;
 import java.util.List;
 
 @RestController  //组合注解 是GetMapping的基础
-@RequestMapping("/products")
+@RequestMapping("/products")//localhost:9090/products/selectBrand
 public class ProductController {
     @Autowired
     private ProductsMapper productsMapper;
 
     @GetMapping
     public List<Product> getAllProducts(){
-        System.out.println(productsMapper.findAll().getClass().toString());
         return productsMapper.findAll();
     }
 

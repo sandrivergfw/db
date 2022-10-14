@@ -14,17 +14,13 @@
 			class="register_form">
 				<!--用户名 </el-input>-->
 				<el-form-item prop="username">
-					<el-input
-              v-model="registerForm.username"
-              placeholder="User Name"
-              id="customerName"
-          ></el-input>
+					<el-input v-model="registerForm.username" placeholder="User Name"></el-input>
 					<!--注意icon图标的引用格式-->
 				</el-form-item>
 				<!--密码-->
 				<el-form-item prop="password">
 					<el-input v-model="registerForm.password" placeholder="Password"
-					type="password" id="loginPwd"></el-input>
+					type="password"></el-input>
 				</el-form-item>
 				<el-form-item prop="password_again">
 					<el-input v-model="registerForm.password_again" placeholder="Password Again"
@@ -47,8 +43,7 @@
 	import { useRouter } from 'vue-router';
 	import { ref, unref } from "vue"; // 引入组件
 	import { ElMessage, ElMessageBox } from 'element-plus';
-	import type { FormInstance } from 'element-plus';
-  import axios from "axios";
+	import type { FormInstance } from 'element-plus'
 
 
 	// 这是注册表单的数据绑定对象
@@ -100,36 +95,14 @@
 	})
 
 	// 组合式api中没有this概念，使用ref和unref获取对象的引用
-	// 注册
+	// 登陆
 	function registe() {
 		if (!registerFormRef.value) return
 		registerFormRef.value.validate(
       (valid: boolean) => {
-				console.log("注册信息格式是否正确" + valid)
+				console.log(valid)
 				if (!valid) ElMessageBox.alert('注册信息格式不正确', 'ERROR');
-				else {
-          let data_check = {
-            "customerName": (<HTMLInputElement>document.getElementById("customerName")).value,
-          }
-          axios.post('http://localhost:9090/customer/namecheck', data_check).then(res_check=>{
-            if (res_check.data) {
-              ElMessageBox.alert('用户已存在', 'FAIL');
-            }
-            else {
-              let data_register = {
-                "customerName": (<HTMLInputElement>document.getElementById("customerName")).value,
-                "loginPwd": (<HTMLInputElement>document.getElementById("loginPwd")).value
-              }
-              axios.post('http://localhost:9090/customer/register', data_register).then(res_register=>{
-                console.log("注册状态" + res_register.data);
-                if (res_register.data) {
-                  ElMessageBox.alert('注册成功', 'SUCCESS');
-                }
-              })
-            }
-          })
-
-        }
+				else ElMessageBox.alert('注册成功', 'SUCCESS');
 			}
 		);
 	}

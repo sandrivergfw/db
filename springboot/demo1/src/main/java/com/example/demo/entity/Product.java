@@ -6,9 +6,15 @@ import lombok.Data;
 public class Product {
     private int productId;
     private String productName;
-    private String brand;
-    private double size;//电脑尺寸
-    private int sales;//销量
     private double price;
+    private double size;//电脑尺寸
+    private String picture;
+    private int SSD;
+    private int memory;
+    private int sales;//销量
+    private String brand;
+
+
+
 
 }

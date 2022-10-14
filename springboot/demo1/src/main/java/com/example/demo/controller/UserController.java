@@ -3,8 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.UserService;
-import com.example.demo.utils.CreateJwt;
-import org.apache.ibatis.annotations.Param;
+import com.example.demo.utils.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +41,7 @@ public class UserController {
         List<User> users = userMapper.login(user.getUsername(), user.getPassword());
         Map<Integer,String> map = new HashMap<>();
         if(users.size()==1){
-            map.put(1,CreateJwt.getToken(user.getUsername(),user.getId()));
+           // map.put(1, TokenUtil.getToken(user.getUsername(),user.getId()));
         }else {
             map.put(0,"error");
         }

@@ -92,7 +92,7 @@
 	}
   function goUserPage() {
 		router.push({
-			path: '/userPage'
+			path: '/userPage/overview'
 		})
 	}
   function goMShopPage() {
