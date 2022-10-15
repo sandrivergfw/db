@@ -14,6 +14,11 @@ public interface CustomerMapper {
     @Select("select address from customers where customerId=#{customerId}")
     String getAddress(int customerId);
 
+    /* TODO */
+    @Select("select customerId from customers where customerName = #{customerName}")
+    Integer getIdByName(String customerName);
+    /* TODO */
+
     @Select("select * from customers where customerName = #{customerName}")
     List<Customer> nameCheck(@Param("customerName") String customerName);
 

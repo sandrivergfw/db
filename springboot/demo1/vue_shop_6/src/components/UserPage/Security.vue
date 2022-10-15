@@ -137,7 +137,7 @@
 	}
   function goUserPage() {
 		router.push({
-			path: '/userPage/overview'
+			path: '/userPage'
 		})
 	}
   function goHome() {
@@ -147,7 +147,7 @@
   }
   function goOverView() {
     router.push({
-			path: '/userPage/overview'
+			path: '/userPage'
 		})
   }
   function goSecurity() {

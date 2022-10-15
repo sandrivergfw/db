@@ -2,6 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.Cart;
 import com.example.demo.entity.Order;
+import com.example.demo.linkClass.CartProduct;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -9,6 +10,12 @@ import java.util.List;
 
 @Mapper
 public interface CartMapper {
+    /* TODO */
+    @Select("SELECT * " +
+            "FROM cartinfor,products " +
+            "WHERE customerId=#{customerId} and products.productId=cartinfor.productId")
+    public List<CartProduct> getAllCart(@Param("customerId") Integer customerId);
+    /* TODO */
 
     @Update("update cartinfor set isSelect=not isSelect where customerId=#{customerId} and productId=#{productId}")
     int changeCheckbox(@Param("customerId") int customerId,@Param("productId") int productId);
@@ -25,7 +32,7 @@ public interface CartMapper {
     @Select("select * from cartinfor where customerId=#{customerId} and productId=#{productId}")
     public List<Cart> check(@Param("customerId") int customerId,@Param("productId") int productId);
 
-    @Insert("insert into cartinfor set customerId=#{customerId},productId=#{productId},isSelect=0")
+    @Insert("insert into cartinfor set customerId=#{customerId},productId=#{productId},isSelect=0,num=1") /* TODO */
     public int addProduct(@Param("customerId") int customerId,@Param("productId") int productId);
 
     @Update("update cartinfor set num=num+1 where customerId=#{customerId} and productId=#{productId}")

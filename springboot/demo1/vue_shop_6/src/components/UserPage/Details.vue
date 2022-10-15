@@ -168,11 +168,6 @@
 			path: '/register'
 		})
 	}
-  function goUserPage() {
-		router.push({
-			path: '/userPage/overview'
-		})
-	}
   function goHome() {
     router.push({
 			path: '/home'
@@ -180,7 +175,7 @@
   }
   function goOverView() {
     router.push({
-			path: '/userPage/overview'
+			path: '/userPage'
 		})
   }
   function goSecurity() {

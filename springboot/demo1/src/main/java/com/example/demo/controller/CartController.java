@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Cart;
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.Product;
+import com.example.demo.linkClass.CartProduct;
 import com.example.demo.mapper.CartMapper;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.mapper.OrderMapper;
@@ -24,6 +27,14 @@ public class CartController {
     private ProductsMapper productsMapper;
     @Autowired
     private CustomerMapper customerMapper;
+
+    /* TODO */
+    @PostMapping
+    public List<CartProduct> getAllCarts(@RequestBody Customer customer){
+        System.out.println("customerId: " + customer.getCustomerId());
+        return cartMapper.getAllCart(customer.getCustomerId());
+    }
+    /* TODO */
 
     @PostMapping("/buyAll")
     public boolean buyAll(@Param("customerId")int customerId){

@@ -17,7 +17,7 @@
           <el-col :span="2" :offset="1" class="header_bottons">
             游戏本
           </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons" @click="test">
+          <el-col :span="2" :offset="1" class="header_bottons">
             全能本
           </el-col>
           <el-col :span="2" :offset="1" class="header_bottons">
@@ -75,9 +75,9 @@
                 <span>{{o.productName}}</span>
                 <div class="bottom">
                   <time class="time">{{ o.brand }}</time>
-                  <el-button class="button" type="primary" @click="purchase(o)">购买</el-button>
+                  <el-button class="button" type="primary" @click="purchase(o)">加入购物车</el-button>
                 </div>
-                <span>{{o.price}}</span>
+                <span>￥{{o.price}}</span>
               </div>
             </el-card>
           </div>
@@ -91,8 +91,7 @@
   </div>
 </template>
 
-<script lang="ts">
-
+<script lang="ts" setup>
   import {
     ArrowDown,
     Check,
@@ -101,81 +100,89 @@
     CirclePlusFilled,
     Plus,
   } from '@element-plus/icons-vue'
-
   import { useRouter } from 'vue-router';
-  import {onMounted, ref, unref} from 'vue';
+  import { ref, unref } from 'vue';
   import axios from "axios";
-  export default {
-    setup(){
-      // 切换页面的路由
+  import { h } from 'vue'
+  import { ElNotification } from 'element-plus'
+  import * as url from "url";
+  import qs from 'qs';
 
-      const router = useRouter()
-      function goLogin() {
-        router.push({
-          path: '/login'
-        })
-      }
-      function goRegister() {
-        router.push({
-          path: '/register'
-        })
-      }
-      function goUserPage() {
-        router.push({
-          path: '/userPage/overview'
-        })
-      }
-      function goHome() {
-        router.push({
-          path: '/home'
-        })
-      }
+  // 切换页面的路由
+	const router = useRouter()
+	function goLogin() {
+		router.push({
+			path: '/login'
+		})
+	}
+  function goRegister() {
+		router.push({
+			path: '/register'
+		})
+	}
+  function goUserPage() {
+		router.push({
+			path: '/userPage/overview'
+		})
+	}
+  function goHome() {
+    router.push({
+			path: '/home'
+		})
+  }
 
-      // 模糊页面特效
-      const isActive = ref(false)
-      function blurThePage(){
-        isActive.value = !isActive.value;
-        console.log(isActive.value)
+  // 模糊页面特效
+  const isActive = ref(false)
+  function blurThePage(){
+		isActive.value = !isActive.value;
+    console.log(isActive.value)
+	}
+  // 商品展示
+  const todos = ref()
+
+  axios.get("http://localhost:9090/products").then(res=>{
+    console.log(res.data);
+    todos.value=res.data;
+    console.log(todos.value);
+  })
+
+  function purchase(o: any) {
+    if (localStorage.getItem('token') == null) {
+      router.push({
+        path: '/login'
+      })
+    } else {
+      let data = {
+        "customerId": localStorage.getItem('customerId'),
+        "productId": o.productId,
       }
-      // 商品展示
-      let id = 0
-      const currentDate = ref(new Date())
-      const todos = ref([
-        { id: id++, text: 'Learn HTML', detail: 'yummy hamburger', done: true, price:"￥1" },
-        { id: id++, text: 'Learn JavaScript', detail: 'yummy hamburger', done: true, price:"￥1" },
-        { id: id++, text: 'Learn Vue 1', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 2', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 3', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 4', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 5', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 6', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 7', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 8', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 9', detail: 'yummy hamburger', done: false, price:"￥1" },
-        { id: id++, text: 'Learn Vue 10', detail: 'yummy hamburger', done: false, price:"￥1" }
-      ])
-      function purchase(o: any) {
-        console.log(o.id);
-      }
-      function test(){
-        for (let i=0;i<todos.value.length;i++){
-          console.log(todos.value[i]);
-        }
-      }
-      axios.get("http://localhost:9090/products").then(res=>{
-        console.log(res.data)
-        todos.value = res.data;
-        console.log(todos.value);
-        for (let i=0;i<todos.value.length;i++){
-          console.log(todos.value[i]);
-        }
+      axios.post("http://localhost:9090/cart/check", qs.stringify(data)).then(res1 => {
+        console.log("是否已经加入购物车" + res1.data);
+        if (!res1.data) {
+          axios.post("http://localhost:9090/cart/add", qs.stringify(data)).then(res => {
+            console.log("是否加入购物车成功" + res.data);
+            if (res.data) {
+              ElNotification({
+                title: '成功',
+                message: '商品已加入购物车',
+                duration: 1500,
+              })
+            } else {
+              ElNotification({
+                title: '失败',
+                message: '商品未加入购物车',
+                duration: 1500,
+              })
+            }
+          })
+        } else ElNotification({
+          title: '成功',
+          message: '商品已加入购物车',
+          duration: 1500,
+        })
       })
     }
   }
-
-
-
-
 
 </script>
 

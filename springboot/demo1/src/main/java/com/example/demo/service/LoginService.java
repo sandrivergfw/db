@@ -33,6 +33,9 @@ public class LoginService {
         ObjectMapper objectMapper = new ObjectMapper();
         System.out.println("loginservice: "+customerName+" pwd:"+loginPwd);
         String rightPwd = customerMapper.getPwdByName(customerName);
+        /* TODO */
+        int customerId = customerMapper.getIdByName(customerName);
+        /* TODO */
         String token;
         boolean success ;
         if(Objects.equals(loginPwd, rightPwd)){
@@ -44,7 +47,7 @@ public class LoginService {
             success = false;
         }
 
-        OnlineCustomer onlineCustomer = new OnlineCustomer(success,token);
+        OnlineCustomer onlineCustomer = new OnlineCustomer(success,token,customerId);
         return objectMapper.writeValueAsString(onlineCustomer);
     }
 
