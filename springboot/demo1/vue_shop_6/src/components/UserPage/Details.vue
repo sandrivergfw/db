@@ -7,7 +7,7 @@
           <el-col :span="3" class="logo_box">
             <img src="../../assets/computer_logo.png" alt="" class="logo"  @click="goHome">
           </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons">
+          <el-col :span="2" :offset="1" class="header_bottons" @click="goMShopPage">
             最新热卖
           </el-col>
           <el-col :span="2" :offset="1" class="header_bottons">
@@ -29,17 +29,21 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item :icon="Plus" @click="goLogin">
+                  <el-dropdown-item @click="goLogin" v-if="!haveToken">
+                    <el-icon class="iconfont icon-yonghu_user"></el-icon>
                     登陆账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goRegister">
+                  <el-dropdown-item @click="goRegister" v-if="!haveToken">
+                    <el-icon class="iconfont icon-tianjia_add"></el-icon>
                     注册账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goUserPage">
+                  <el-dropdown-item @click="goUserPage" v-if="haveToken">
+                    <el-icon class="iconfont icon-yinliu_drainage"></el-icon>
                     个人页面
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled">
-                    注销
+                  <el-dropdown-item v-if="haveToken">
+                    <el-icon class="iconfont icon-tuichu_exit"></el-icon>
+                    退出登陆
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -103,27 +107,74 @@
           </el-row>
           <div class="inputForm">
             <div class="inputBox">
-              <input type="text" required>
+              <input type="text" required v-model="customerDetails.customerName">
               <span>昵称</span>
             </div>
             <div class="inputBox">
-              <input type="text" required>
+              <input type="text" required v-model="customerDetails.email">
               <span>电子邮箱</span>
             </div>
             <div class="inputBox">
-              <input type="text" required>
+              <input type="text" required v-model="customerDetails.birthday">
               <span>出生日期</span>
             </div>
             <div class="inputBox">
-              <input type="text" required>
+              <input type="text" required v-model="customerDetails.address">
               <span>住址</span>
             </div>
+
             <div class="inputBox">
-              <input type="text" required>
+              <input type="password"
+                     disabled="disabled"
+                     required
+              >
               <span>密码</span>
+
+              <el-button text @click="dialogVisible = true"
+              >修改密码</el-button
+              >
+              <el-dialog
+                  v-model="dialogVisible"
+                  class="changePwdBox"
+                  width="600px"
+                  title="修改密码"
+                  :before-close="handlePwdChangeClose"
+              >
+                <div>
+                  <el-form
+                      :model="registerForm"
+                      :rules="registerFormRule"
+                      ref="registerFormRef"
+                      label-width="0px"
+                      class="register_form">
+                    <!--用户名 </el-input>-->
+                    <el-form-item prop="origin_password">
+                      <el-input
+                          v-model="registerForm.origin_password"
+                          placeholder="Origin Password"
+                          id="customerName"
+                      ></el-input>
+                      <!--注意icon图标的引用格式-->
+                    </el-form-item>
+                    <!--密码-->
+                    <el-form-item prop="password">
+                      <el-input v-model="registerForm.password" placeholder="New Password"
+                                type="password" id="loginPwd"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="password_again">
+                      <el-input v-model="registerForm.password_again" placeholder="New Password Again"
+                                type="password"></el-input>
+                    </el-form-item>
+                  </el-form>
+                </div>
+                <div class="closeChangePwdBox">
+                  <el-button @click="changePwd" enable>确定</el-button>
+                </div>
+              </el-dialog>
+
             </div>
             <div class="inputBox">
-              <input type="text" required>
+              <input type="text" required v-model="customerDetails.phone">
               <span>电话</span>
             </div>
             <div class="deleteBox">
@@ -132,7 +183,12 @@
             </div>
             <div class="saveBox">
               <span>保存编辑</span>
-              <el-button class="saveBot" type="info" round>保存</el-button>
+              <el-button
+                  class="saveBot"
+                  type="info"
+                  round
+                  @click="save_customerInfor"
+              >保存</el-button>
             </div>
           </div>
         </el-main>
@@ -155,7 +211,148 @@
     Plus,
   } from '@element-plus/icons-vue'
   import { useRouter } from 'vue-router';
-  import { ref } from 'vue';
+  import {reactive, ref } from 'vue';
+  import { goMShopPage } from  './router_pages';
+  import {ElMessageBox, ElNotification, FormInstance} from 'element-plus'
+  import axios from "axios";
+  import qs from 'qs';
+
+  let customerInfor = JSON.parse(localStorage.getItem("customerInfor")); // 可以忽略，人为保证不为null
+  console.log(customerInfor);
+
+  const customerDetails = reactive({
+    'customerName': customerInfor.customerName,
+    'email': customerInfor.email,
+    'birthday': customerInfor.birthday,
+    'address': customerInfor.address,
+    'phone': customerInfor.phone,
+  })
+
+  // 检查token
+  let haveToken = false;
+  if (localStorage.getItem("token") != null) {
+    haveToken = true;
+  }
+
+  // 修改密码服务
+  // 修改密码的弹出框
+  const dialogVisible = ref(false)
+  const handlePwdChangeClose = (done: () => void) => {
+    ElMessageBox.confirm('放弃修改密码？')
+        .then(() => {
+          done()
+        })
+        .catch(() => {
+          // catch error
+        })
+  }
+  // 这是表单的数据绑定对象
+  const registerForm = reactive({
+    origin_password: '',
+    password: '',
+    password_again: '',
+  })
+  // 这是表单的验证规则对象
+  const registerFormRef = ref<FormInstance>()
+  const validatePass1 = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入密码'))
+    } else if (value.length < 6 || value.length > 20){
+      callback(new Error('长度在 6 到 20 个字符之间'))
+    } else{
+      if (registerForm.password_again !== '') {
+        if (!registerFormRef.value) return
+        registerFormRef.value.validateField('password_again', () => null)
+      }
+      callback()
+    }
+  }
+  const validatePass2 = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请再次输入密码'))
+    } else if (value.length < 6 || value.length > 20) {
+      callback(new Error('长度在 6 到 20 个字符之间'))
+    } else if (value !== registerForm.password) {
+      callback(new Error("两次输入密码不一致"))
+    } else {
+      callback()
+    }
+  }
+  const registerFormRule = reactive({
+    // 验证密码
+    password: [
+      { validator: validatePass1, trigger: 'blur'}
+    ],
+    // 再次验证密码
+    password_again: [
+      { validator: validatePass2, trigger: 'blur'}
+    ]
+  })
+  function changePwd() {
+    if (!registerFormRef.value) return
+    registerFormRef.value.validate(
+      (valid: boolean) => {
+        let check_password_data = {
+          "customerId": localStorage.getItem("customerId"),
+          "loginPwd": registerForm.origin_password,
+        }
+        console.log(check_password_data);
+        axios.post('http://localhost:9090/customer/checkPwd',
+          qs.stringify(check_password_data)).then(res_check_password=>{
+
+          if (res_check_password.data) {
+            console.log("原密码正确");
+            axios.post('http://localhost:9090/customer/modifyPwd',
+              qs.stringify(check_password_data)).then(res_change_pwd=>{
+
+                if (res_change_pwd.data) {
+                  dialogVisible.value = false;
+                  console.log("修改密码成功");
+                  ElMessageBox.alert('修改密码成功', 'SUCCESS');
+                } else {
+                  console.log("修改密码失败");
+                  ElMessageBox.alert('修改密码失败', 'ERROR');
+                }
+            })
+          } else {
+            console.log("原密码错误");
+            ElMessageBox.alert('原密码不正确', 'ERROR');
+          }
+        })
+      }
+    );
+  }
+
+  // 保存修改的信息
+  function save_customerInfor() {
+    let save_data = {
+      "customerId": localStorage.getItem("customerId"),
+      "customerName": customerDetails.customerName,
+      "phone": customerDetails.phone,
+      "email": customerDetails.email,
+      "address": customerInfor.address,
+      "birthday": customerDetails.birthday,
+    }
+    axios.post('http://localhost:9090/customer/modifyInfo', save_data).then(res=>{
+      console.log(save_data)
+      console.log(customerInfor)
+      console.log("修改信息成功: ", res.data);
+      if (res.data) {
+        let uId = {
+          'customerId': localStorage.getItem("customerId"),
+        }
+        axios.post("http://localhost:9090/customer/info", qs.stringify(uId)).then(res=>{
+          //console.log(res.data);
+          localStorage.setItem('customerInfor', JSON.stringify(res.data));
+        })
+        ElNotification({
+          title: '成功',
+          message: '修改个人信息成功',
+          duration: 1500,
+        })
+      }
+    })
+  }
 
 	const router = useRouter()
 	function goLogin() {
@@ -367,6 +564,26 @@
   }
 }
 
+.changePwdBox {
+  width: 30px;
+  .closeChangePwdBox {
+    margin-top: 150px;
+    margin-left: 500px;
+    width: 100px;
+  }
+}
+.register_form{
+  position: absolute;
+  right: 0;
+  bottom: 20%;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+  // 默认的box-sizing: content-box(边框和内边距宽度会增加到内容区的宽度上)
+  .el-form-item {
+    margin: 25px 80px;
+  }
+}
 
 
 // 侧边导航栏

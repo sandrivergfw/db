@@ -7,7 +7,7 @@
           <el-col :span="3" class="logo_box">
             <img src="../../assets/computer_logo.png" alt="" class="logo"  @click="goHome">
           </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons">
+          <el-col :span="2" :offset="1" class="header_bottons" @click="goMShopPage">
             最新热卖
           </el-col>
           <el-col :span="2" :offset="1" class="header_bottons">
@@ -29,17 +29,21 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item :icon="Plus" @click="goLogin">
+                  <el-dropdown-item @click="goLogin" v-if="!haveToken">
+                    <el-icon class="iconfont icon-yonghu_user"></el-icon>
                     登陆账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goRegister">
+                  <el-dropdown-item @click="goRegister" v-if="!haveToken">
+                    <el-icon class="iconfont icon-tianjia_add"></el-icon>
                     注册账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goUserPage">
+                  <el-dropdown-item @click="goUserPage" v-if="haveToken">
+                    <el-icon class="iconfont icon-yinliu_drainage"></el-icon>
                     个人页面
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled">
-                    注销
+                  <el-dropdown-item v-if="haveToken">
+                    <el-icon class="iconfont icon-tuichu_exit"></el-icon>
+                    退出登陆
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -102,22 +106,31 @@
             </el-col>
           </el-row>
           <div class="productBox">
+
             <div
                 v-for="(o) in todos"
                 :key="o.productId"
                 class="productItem"
             >
               <img
-                  src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+                  src="https://ts1.cn.mm.bing.net/th/id/R-C.f18413decc8ddfb116d1e9a00c483ec8?rik=dqtjG59Oy%2fN1CQ&riu=http%3a%2f%2fwww.somode.com%2fuploadimg%2fimage%2f20200430%2f20200430163352_10974.jpg&ehk=loh76OZm43wsrfa6TVQwGOZSiTCXH3%2foTeCEHoOZn00%3d&risl=&pid=ImgRaw&r=0"
                   class="image"
               />
+
               <span>{{o.productName}}</span>
               <time class="time">{{ o.brand }}</time>
               <span>￥{{o.price}}</span>
-              <span>{{o.num}}</span>
+              <span class="product_num">
+                <el-button class="button" type="primary" @click="minusProduct(o)">-</el-button>
+                <span>
+                {{o.num}}
+                </span>
+                <el-button class="button" type="primary" @click="plusProduct(o)">+</el-button>
+              </span>
               <el-button class="button" type="primary" @click="removeProduct(o)">移除</el-button>
             </div>
           </div>
+
         </el-main>
       </el-container>
       <el-footer>
@@ -141,6 +154,7 @@
   import { ref } from 'vue';
   import axios from "axios";
   import qs from 'qs';
+  import { goMShopPage } from  './router_pages';
 
 	const router = useRouter()
 	function goLogin() {
@@ -194,6 +208,12 @@
 		})
   }
 
+  // 检查token
+  let haveToken = false;
+  if (localStorage.getItem("token") != null) {
+    haveToken = true;
+  }
+
   const handleOpen = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
   }
@@ -235,11 +255,42 @@
     customerId: localStorage.getItem('customerId'),
   }
   console.log(data.customerId);
+  console.log(todos)
   axios.post("http://localhost:9090/cart", data).then(res=>{
     console.log(res.data);
     todos.value=res.data;
     console.log(todos.value);
   })
+
+  // 加减产品
+  function minusProduct(o: any){
+    console.log(o.productId);
+    let minusPro_data = {
+      "customerId": localStorage.getItem('customerId'),
+      "productId": o.productId,
+    }
+    axios.post("http://localhost:9090/cart/minusProduct", qs.stringify(minusPro_data)).then(res=>{
+      console.log("商品减一：", res.data)
+      if (res.data && o.num!= 1) {
+        o.num = o.num-1;
+      }
+    })
+  }
+
+  function plusProduct(o: any){
+    console.log(o.productId);
+    let plusPro_data = {
+      "customerId": localStorage.getItem('customerId'),
+      "productId": o.productId,
+    }
+    axios.post("http://localhost:9090/cart/plusProduct", qs.stringify(plusPro_data)).then(res=>{
+      console.log("商品加一：", res.data)
+      if (res.data) {
+        o.num = o.num+1;
+      }
+    })
+  }
+
 </script>
   
 <style lang="less" scoped>
@@ -354,6 +405,12 @@
   }
   .productItem:hover {
     box-shadow: 0 0 10px #cccccc;
+  }
+  .product_num {
+    span {
+      margin: 0 10px;
+    }
+
   }
 }
 

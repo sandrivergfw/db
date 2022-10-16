@@ -7,7 +7,7 @@
           <el-col :span="3" class="logo_box">
             <img src="../../assets/computer_logo.png" alt="" class="logo"  @click="goHome">
           </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons">
+          <el-col :span="2" :offset="1" class="header_bottons" @click="goMShopPage">
             最新热卖
           </el-col>
           <el-col :span="2" :offset="1" class="header_bottons">
@@ -29,17 +29,21 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item :icon="Plus" @click="goLogin">
+                  <el-dropdown-item @click="goLogin" v-if="!haveToken">
+                    <el-icon class="iconfont icon-yonghu_user"></el-icon>
                     登陆账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goRegister">
+                  <el-dropdown-item @click="goRegister" v-if="!haveToken">
+                    <el-icon class="iconfont icon-tianjia_add"></el-icon>
                     注册账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goUserPage">
+                  <el-dropdown-item @click="goUserPage" v-if="haveToken">
+                    <el-icon class="iconfont icon-yinliu_drainage"></el-icon>
                     个人页面
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled">
-                    注销
+                  <el-dropdown-item v-if="haveToken">
+                    <el-icon class="iconfont icon-tuichu_exit"></el-icon>
+                    退出登陆
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -123,6 +127,7 @@
   } from '@element-plus/icons-vue'
   import { useRouter } from 'vue-router';
   import { ref } from 'vue';
+  import { goMShopPage } from  './router_pages';
 
 	const router = useRouter()
 	function goLogin() {
@@ -174,6 +179,12 @@
     router.push({
 			path: '/userPage/history'
 		})
+  }
+
+  // 检查token
+  let haveToken = false;
+  if (localStorage.getItem("token") != null) {
+    haveToken = true;
   }
 
   const handleOpen = (key: string, keyPath: string[]) => {

@@ -8,7 +8,7 @@
           <el-col :span="3" class="logo_box">
             <img src="../../assets/computer_logo.png" alt="" class="logo"  @click="goHome">
           </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons">
+          <el-col :span="2" :offset="1" class="header_bottons" @click="goMShopPage">
             最新热卖
           </el-col>
           <el-col :span="2" :offset="1" class="header_bottons">
@@ -30,17 +30,21 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item :icon="Plus" @click="goLogin">
+                  <el-dropdown-item @click="goLogin" v-if="!haveToken">
+                    <el-icon class="iconfont icon-yonghu_user"></el-icon>
                     登陆账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goRegister">
+                  <el-dropdown-item @click="goRegister" v-if="!haveToken">
+                    <el-icon class="iconfont icon-tianjia_add"></el-icon>
                     注册账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goUserPage">
+                  <el-dropdown-item @click="goUserPage" v-if="haveToken">
+                    <el-icon class="iconfont icon-yinliu_drainage"></el-icon>
                     个人页面
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled">
-                    注销
+                  <el-dropdown-item v-if="haveToken">
+                    <el-icon class="iconfont icon-tuichu_exit"></el-icon>
+                    退出登陆
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -119,7 +123,7 @@
                     昵称
                   </el-col>
                   <el-col class="user-inf-content" :offset="4" :span="2">
-                    后端
+                    {{customerInfor.customerName}}
                   </el-col>
                 </el-row>
               
@@ -128,7 +132,7 @@
                     邮箱
                   </el-col>
                   <el-col class="user-inf-content" :offset="4" :span="2">
-                    后端
+                    {{customerInfor.email}}
                   </el-col>
                 </el-row>
               
@@ -137,7 +141,7 @@
                     电话
                   </el-col>
                   <el-col class="user-inf-content" :offset="4" :span="2">
-                    后端
+                    {{customerInfor.phone}}
                   </el-col>
                 </el-row>
 
@@ -146,7 +150,7 @@
                     住址
                   </el-col>
                   <el-col class="user-inf-content" :offset="4" :span="2">
-                    后端
+                    {{customerInfor.address}}
                   </el-col>
                 </el-row>
               </div>
@@ -210,54 +214,66 @@
     Plus,
   } from '@element-plus/icons-vue'
   import { useRouter } from 'vue-router';
-  import { ref } from 'vue';
+  import {onBeforeMount, onMounted, ref} from 'vue';
+  import { goMShopPage } from  './router_pages';
+  import axios from "axios";
+  import qs from 'qs';
 
-	const router = useRouter()
-	function goLogin() {
-		router.push({
-			path: '/login'
-		})
-	}
+  const router = useRouter()
+  function goLogin() {
+    router.push({
+      path: '/login'
+    })
+  }
   function goRegister() {
-		router.push({
-			path: '/register'
-		})
-	}
+    router.push({
+      path: '/register'
+    })
+  }
   function goHome() {
     router.push({
-			path: '/home'
-		})
+      path: '/home'
+    })
   }
   function goOverView() {
     router.push({
-			path: '/userPage'
-		})
+      path: '/userPage'
+    })
   }
   function goSecurity() {
     router.push({
-			path: '/userPage/security'
-		})
+      path: '/userPage/security'
+    })
   }
   function goDetails() {
     router.push({
-			path: '/userPage/details'
-		})
+      path: '/userPage/details'
+    })
   }
   function goPayWay() {
     router.push({
-			path: '/userPage/payway'
-		})
+      path: '/userPage/payway'
+    })
   }
   function goShopCart() {
     router.push({
-			path: '/userPage/shopcart'
-		})
+      path: '/userPage/shopcart'
+    })
   }
   function goHistory() {
     router.push({
-			path: '/userPage/history'
-		})
+      path: '/userPage/history'
+    })
   }
+
+  // 检查token
+  let haveToken = false;
+  if (localStorage.getItem("token") != null) {
+    haveToken = true;
+  }
+
+  let customerInfor = JSON.parse(localStorage.getItem("customerInfor")); // 可以忽略，人为保证不为null
+  console.log(customerInfor);
 
   const handleOpen = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
@@ -269,9 +285,9 @@
   // 模糊特效
   const isActive = ref(false)
   function blurThePage(){
-		isActive.value = !isActive.value;
+    isActive.value = !isActive.value;
     console.log(isActive.value)
-	}
+  }
 </script>
   
 <style lang="less" scoped>

@@ -59,6 +59,7 @@
 	import { ref, unref } from "vue"; // 引入组件
   import axios from "axios";
 	import { useRouter } from 'vue-router';
+  import qs from "qs";
 
 	// 这是登陆表单的数据绑定对象
 	const a = '123'
@@ -119,6 +120,14 @@
           localStorage.setItem('token', res.data.token); // 保存token到本地储存
           localStorage.setItem('customerId', res.data.customerId); // 保存customerId
           router.push({path: '/home'});
+
+          let uId = {
+            'customerId': res.data.customerId,
+          }
+          axios.post("http://localhost:9090/customer/info", qs.stringify(uId)).then(res=>{
+            console.log(res.data);
+            localStorage.setItem('customerInfor', JSON.stringify(res.data));
+          })
         } else {
           login_msg = "fail"
         }

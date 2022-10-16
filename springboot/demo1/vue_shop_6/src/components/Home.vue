@@ -31,18 +31,21 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="goLogin">
+                  <el-dropdown-item @click="goLogin" v-if="!haveToken">
                     <el-icon class="iconfont icon-yonghu_user"></el-icon>
                     登陆账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goRegister">
+                  <el-dropdown-item @click="goRegister" v-if="!haveToken">
+                    <el-icon class="iconfont icon-tianjia_add"></el-icon>
                     注册账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goUserPage">
+                  <el-dropdown-item @click="goUserPage" v-if="haveToken">
+                    <el-icon class="iconfont icon-yinliu_drainage"></el-icon>
                     个人页面
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled">
-                    注销
+                  <el-dropdown-item v-if="haveToken">
+                    <el-icon class="iconfont icon-tuichu_exit"></el-icon>
+                    退出登陆
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -101,7 +104,6 @@
 		})
   }
 
-
   const imgwarp = [
     {url:require("../assets/pictures/laptops/1.jpg")},
     {url:require("../assets/pictures/laptops/2.jpg")},
@@ -110,6 +112,12 @@
     {url:require("../assets/pictures/laptops/5.jpg")},
     {url:require("../assets/pictures/laptops/6.jpg")},
   ]
+
+  // 检查token
+  let haveToken = false;
+  if (localStorage.getItem("token") != null) {
+    haveToken = true;
+  }
 
   // 模糊页面特效
   const isActive = ref(false)

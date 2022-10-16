@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 
 public class TokenUtil { //CreateJwt
-    private static final long EXPIRE_TIME = 15*60*1000;//有效时间
+    private static final long EXPIRE_TIME = 24*60*60*1000;//有效时间
     private static final String TOKEN_SECRET = "tokenqkj";//密钥眼（？
 
     /**

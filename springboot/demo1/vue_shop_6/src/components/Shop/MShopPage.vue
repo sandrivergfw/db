@@ -31,18 +31,21 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="goLogin">
+                  <el-dropdown-item @click="goLogin" v-if="!haveToken">
                     <el-icon class="iconfont icon-yonghu_user"></el-icon>
                     登陆账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goRegister">
+                  <el-dropdown-item @click="goRegister" v-if="!haveToken">
+                    <el-icon class="iconfont icon-tianjia_add"></el-icon>
                     注册账户
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled" @click="goUserPage">
+                  <el-dropdown-item @click="goUserPage" v-if="haveToken">
+                    <el-icon class="iconfont icon-yinliu_drainage"></el-icon>
                     个人页面
                   </el-dropdown-item>
-                  <el-dropdown-item :icon="CirclePlusFilled">
-                    注销
+                  <el-dropdown-item v-if="haveToken">
+                    <el-icon class="iconfont icon-tuichu_exit"></el-icon>
+                    退出登陆
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -66,7 +69,7 @@
               <template #header>
                 <div class="card-header">
                   <img
-                    src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+                    src="https://ts1.cn.mm.bing.net/th/id/R-C.f18413decc8ddfb116d1e9a00c483ec8?rik=dqtjG59Oy%2fN1CQ&riu=http%3a%2f%2fwww.somode.com%2fuploadimg%2fimage%2f20200430%2f20200430163352_10974.jpg&ehk=loh76OZm43wsrfa6TVQwGOZSiTCXH3%2foTeCEHoOZn00%3d&risl=&pid=ImgRaw&r=0"
                     class="image"
                   />
                 </div>
@@ -129,6 +132,12 @@
     router.push({
 			path: '/home'
 		})
+  }
+
+  // 检查token
+  let haveToken = false;
+  if (localStorage.getItem("token") != null) {
+    haveToken = true;
   }
 
   // 模糊页面特效

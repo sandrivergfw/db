@@ -21,31 +21,6 @@ public class CustomerController  {
         return "hello world";
     }
 
-    /*@PostMapping("/login")
-    public ResponseResult login(HttpServletResponse response, @RequestBody Customer customer){
-        QueryWrapper<Customer> wrapper = new QueryWrapper<>();
-        wrapper.eq("customerId",customer.getCustomerName())
-                .eq("loginPwd",customer.getLoginPwd());
-        String token = null;
-        Customer customer1 = (Customer) customerMapper.login(customer.getCustomerName(), customer.getLoginPwd());
-        if (customer1!=null){
-            token = TokenUtil.sign(customer1);
-            //成功登录并产生token
-        }
-
-        ResponseResult responseResult = new ResponseResult();
-        if(token!=null){
-            responseResult.setCode(200);
-            responseResult.setMessage(token);
-            responseResult.setSuccess(true);
-            return responseResult;
-        }
-        responseResult.setCode(400);
-        responseResult.setSuccess(false);
-        responseResult.setMessage("登录失败，请重试");
-        return responseResult;
-    }
-    */
     /**
      * 返回1表示注册成功，如果有重名注册不成功
      * @param customer
