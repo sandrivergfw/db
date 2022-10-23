@@ -4,7 +4,7 @@ public class OnlineCustomer extends Customer{
     private String token;
 
     public OnlineCustomer(Customer customer) {
-        super.customerId = customer.getCustomerId();
+        setCustomerId(customer.getCustomerId());
     }
 
     public void setToken(String a) {

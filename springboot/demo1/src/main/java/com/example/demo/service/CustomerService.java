@@ -1,2 +1,5 @@
-package com.example.demo.service;public class CustomerService {
+package com.example.demo.service;
+
+public class CustomerService {
+
 }

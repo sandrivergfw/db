@@ -1,2 +1,7 @@
-package com.example.demo.relation;public class Customer_dislike_comment {
+package com.example.demo.relation;
+
+import lombok.Data;
+
+
+public class Customer_dislike_comment extends Customer_comment{
 }

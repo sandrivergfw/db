@@ -1,18 +1,17 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Cart;
+import com.example.demo.relation.Cart;
 import com.example.demo.entity.Customer;
-import com.example.demo.entity.Product;
 import com.example.demo.linkClass.CartProduct;
 import com.example.demo.mapper.CartMapper;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.mapper.OrderMapper;
 import com.example.demo.mapper.ProductsMapper;
-import com.example.demo.utils.CartRequest;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class CartController {
         String orderAddress = customerMapper.getAddress(customerId);
         for(Cart cart:carts){
             double pay = productsMapper.getPrice(cart.getProductId());
-            Date orderTime = new Date();
+            Timestamp orderTime = new Timestamp(System.currentTimeMillis());
             orderMapper.insert(customerId, orderAddress, orderTime,pay);
         }
         return cartMapper.deleteAllSelect(customerId) == carts.size();

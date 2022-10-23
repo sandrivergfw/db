@@ -1,11 +1,9 @@
 package com.example.demo.mapper;
 
-import com.example.demo.entity.Cart;
-import com.example.demo.entity.Order;
+import com.example.demo.relation.Cart;
 import com.example.demo.linkClass.CartProduct;
 import org.apache.ibatis.annotations.*;
 
-import java.util.Date;
 import java.util.List;
 
 @Mapper

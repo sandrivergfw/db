@@ -39,7 +39,23 @@
     <button @click="plusProduct()">某个商品多买一个</button>
     <button @click="minusProduct">某个商品少买一个</button>
     <button @click="deleteOrder">删除订单</button>
-    <h1>{{login_msg}}</h1>
+
+    <h3>二期需求</h3>
+    <button @click="getProductInfo">获取产品信息</button>
+    <button @click="getProductComment">获取产品评价列表</button>
+    <button @click="getCommentReply">获取评价的回复列表</button>
+    <button @click="postAnReply">对评价发表回复</button>
+    <button @click="likeComment">顾客点击点赞评价</button>
+    <button @click="dislikeComment">顾客点击点踩评价</button>
+    <button @click="storeRegister">店铺注册</button>
+    <button @click="storeLogin">店铺登录</button>
+    <form>
+      图片: <input ref="picx" type="file"/>
+    </form>
+    <button @click="pushPic">点击上传</button>
+    <button @click="getPic">获得头像地址</button>
+    <button @click="infiniteShow">infinite show</button>
+
   </div>
 </template>
 
@@ -348,7 +364,159 @@ export default {
         }).then(res=>{
           console.log(res.data);
         })
+    },
+    getProductInfo(){
+      axios({
+        method:"post",
+        url:"http://localhost:9090/products/getOneProductInfo",
+        headers:{
+          token:this.token
+        },
+        params: {
+          "productId":1
+        }
+      }).then(res=>{
+        console.log(res.data);
+      })
+    },
+    getProductComment(){
+      axios({
+        method:"post",
+        url:"http://localhost:9090/comment/getProductComment",
+        headers:{
+          token:this.token
+        },
+        params: {
+          "productId":1
+        }
+      }).then(res=>{
+        console.log(res.data);
+      })
+    },
+    getCommentReply(){
+      axios({
+        method:"post",
+        url:"http://localhost:9090/reply/getCommentReply",
+        headers:{
+          token:this.token
+        },
+        params: {
+          "commentId":1
+        }
+      }).then(res=>{
+        console.log(res.data);
+      })
+    },
+    postAnReply(){
+      axios({
+        method:"post",
+        url:"http://localhost:9090/reply/postAnReply",
+        headers:{
+          token:this.token
+        },
+        params: {
+          "customerId":1,
+          "commentId":1,
+          "replyText":"这是一个回复"
+        }
+      }).then(res=>{
+        console.log(res.data);
+      })
+    },
+    likeComment(){
+      axios({
+        method:"post",
+        url:"http://localhost:9090/comment/likeComment",
+        headers:{
+          token:this.token
+        },
+        params: {
+          "customerId":1,
+          "commentId":1
+        }
+      }).then(res=>{
+        console.log(res.data);
+      })
+    },
+    dislikeComment(){
+      axios({
+        method:"post",
+        url:"http://localhost:9090/comment/dislikeComment",
+        headers:{
+          token:this.token
+        },
+        params: {
+          "customerId":1,
+          "commentId":1
+        }
+      }).then(res=>{
+        console.log(res.data);
+      })
+    },
+    storeRegister(){
+      const data = {
+        "storeName":"联想旗舰店",
+        "storePwd":"123456",
+      }
+      axios.post("http://localhost:9090/store/register",data).then(res=>{
+        console.log(res.data);
+      })
+    },
+    storeLogin(){
+      const data = {
+        "storeName":"联想旗舰店",
+        "storePwd":"123456",
+      }
+      axios.post("http://localhost:9090/store/login",data).then(res=>{
+        console.log(res.data);
+      })
+    },
+    pushPic(){
+      let fd = new FormData();
+      fd.append("customerId","1"); //传入customerId
+      fd.append("img",this.$refs.picx.files[0]); //传一个文件
+      axios({
+            method:"post",
+            url:"http://localhost:9090/customer/pushProfilePic",
+            headers:{
+              token:this.token
+            },
+            data:fd
+          }).then(res=>{
+            console.log(res.data);
+          }
+      )
+    },
+    getPic(){
+      axios({
+        method:"post",
+        url:"http://localhost:9090/customer/getProfilePic",
+        headers:{
+          token:this.token
+        },
+        params: {
+          "customerId":1,
+        }
+      }).then(res=>{
+        console.log(res.data);
+      })
+    },
+    infiniteShow(){
+      axios({
+        method:"post",
+        url:"http://localhost:9090/products/infiniteShow",
+        headers:{
+          token:this.token
+        },
+        params: {
+          "productId":1,
+          "x":5
+        }
+      }).then(res=>{
+        console.log(res.data);
+      })
     }
+
   },
 
 

@@ -1,6 +1,5 @@
 package com.example.demo.utils;
 
-import com.example.demo.entity.User;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

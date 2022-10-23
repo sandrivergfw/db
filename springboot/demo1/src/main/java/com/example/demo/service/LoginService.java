@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.entity.UserType;
 import com.example.demo.mapper.CustomerMapper;
+import com.example.demo.mapper.StoreMapper;
 import com.example.demo.utils.OnlineCustomer;
 import com.example.demo.utils.TokenUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,32 +24,49 @@ public class LoginService {
 
     @Autowired
     CustomerMapper customerMapper;
+    @Autowired
+    StoreMapper storeMapper;
 
     /**
      * 进行登录操作，如果用户名和密码正确，使用UUID一个字符串作为token
-     * @param customerName
-     * @param loginPwd
+     * @param userName
+     * @param pwd
+     * @param userType
      * @return
      */
-    public String login(String customerName, String loginPwd) throws JsonProcessingException {
+    public String login(String userName, String pwd, UserType userType) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println("loginservice: "+customerName+" pwd:"+loginPwd);
-        String rightPwd = customerMapper.getPwdByName(customerName);
+        String rightPwd;
+        int id;
+        switch (userType){
+            case customer: {
+                rightPwd = customerMapper.getPwdByName(userName);
+                id = customerMapper.getIdByName(userName);
+                break;}
+            case store:{rightPwd = storeMapper.getPwdByName(userName);
+                id = storeMapper.getIdByName(userName);
+                break;}
+            default:{
+                throw new RuntimeException(); //错误的用户类型
+            }
+        }
         /* TODO */
-        int customerId = customerMapper.getIdByName(customerName);
+        /*这是我(zjh)写的吗...为啥毫无印象*/
         /* TODO */
         String token;
         boolean success ;
-        if(Objects.equals(loginPwd, rightPwd)){
-            token = TokenUtil.sign(customerName);
-            redisService.set(token,customerName);
+        if(Objects.equals(pwd, rightPwd)){
+            token = TokenUtil.sign(userName);
+            redisService.set(token,userName);
             success = true;
         }else {
             token = null;
             success = false;
         }
 
-        OnlineCustomer onlineCustomer = new OnlineCustomer(success,token,customerId);
+        //这里onlineCustomer的属性名字改掉了
+
+        OnlineCustomer onlineCustomer = new OnlineCustomer(success,token,id);
         return objectMapper.writeValueAsString(onlineCustomer);
     }
 

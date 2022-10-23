@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.List;
 
 @RestController  //组合注解 是GetMapping的基础
-@RequestMapping("/products")//localhost:9090/products/selectBrand
+@RequestMapping("/products")
 public class ProductController {
     @Autowired
     private ProductsMapper productsMapper;
@@ -39,5 +39,15 @@ public class ProductController {
     public List<Product> selectFilter(@RequestBody Filter filter){
         System.out.println(filter.getPrice1());
         return productsMapper.selectFilter(filter);
+    }
+
+    @RequestMapping("/getOneProductInfo")
+    public Product getInfo(@RequestParam("productId")int productId){
+        return productsMapper.getInfo(productId);
+    }
+
+    @RequestMapping("/infiniteShow")
+    public List<Product> infiniteInfo(@RequestParam("productId")int productId,@RequestParam("x")int x){
+        return productsMapper.infiniteInfo(productId,x);
     }
 }

@@ -1,2 +1,6 @@
-package com.example.demo.entity;public enum UserType {
+package com.example.demo.entity;
+
+public enum UserType {
+    customer,
+    store
 }
