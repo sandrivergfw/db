@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "naive-ui": "^2.33.5",
+    "unplugin-auto-import": "^0.11.4",
+    "unplugin-vue-components": "^0.22.9",
+    "vfonts": "^0.0.3"
+  },
+  "dependencies": {
+    "jwchat": "^1.0.11",
+    "tdesign-icons-vue-next": "^0.1.5",
+    "tdesign-vue-next": "^0.24.9"
+  }
+}

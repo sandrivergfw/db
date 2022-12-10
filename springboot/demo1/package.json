@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "element-ui": "^2.15.10"
+  },
+  "devDependencies": {
+    "unplugin-auto-import": "^0.11.4"
   }
 }

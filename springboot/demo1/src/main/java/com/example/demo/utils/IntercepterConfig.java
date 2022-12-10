@@ -27,8 +27,6 @@ public class IntercepterConfig implements WebMvcConfigurer {
         excludePath.add("/customer/login");
         excludePath.add("/customer/register");
         excludePath.add("/customer/logout");
-        excludePath.add("/store/login");
-        excludePath.add("/store/register");
         excludePath.add("/");
         registry.addInterceptor(tokenInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(excludePath);

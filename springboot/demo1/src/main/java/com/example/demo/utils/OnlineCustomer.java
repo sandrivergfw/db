@@ -6,12 +6,12 @@ import lombok.Data;
 public class OnlineCustomer {
     boolean success;
     String token;
-    Integer userId;
+    Integer customerId;
 
-    public OnlineCustomer(boolean success,String token,Integer userId) {
+    public OnlineCustomer(boolean success,String token,Integer customerId) {
         this.success = success;
         this.token = token;
-        this.userId = userId;
+        this.customerId = customerId;
     }
 
 

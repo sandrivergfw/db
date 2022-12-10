@@ -1,6 +1,8 @@
 package com.example.demo.mapper;
 
+import com.example.demo.entity.Customer;
 import com.example.demo.entity.Product;
+import com.example.demo.entity.User;
 import com.example.demo.utils.Filter;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -52,9 +54,4 @@ public interface ProductsMapper {
     List<Product> selectFilter(@RequestBody Filter filter);
     //@Param("brand") String brand,@Param("price1")double price1, @Param("price2")double price2,@Param("size") double size,
                      //     @Param("sortIndex") String sortIndex,@Param("order") String order
-    @Select("select * from products where productId=#{productId}")
-    Product getInfo(@Param("productId")int productId);
-
-    @Select("select * from products where productId>=#{productId} limit #{x}")
-    List<Product> infiniteInfo(@Param("productId")int productId,@Param("x")int x);
 }

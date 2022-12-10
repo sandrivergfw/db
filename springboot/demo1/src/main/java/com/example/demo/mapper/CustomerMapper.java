@@ -51,9 +51,7 @@ public interface CustomerMapper {
     @Update("update customers set loginPwd=#{loginPwd} where customerId=#{customerId}")
     int updatePwd(@Param("customerId") int customerId,@Param("loginPwd") String loginPwd);
 
-    @Update("update customers set picWay=#{picWay} where customerId=#{customerId}")
-    int updatePicWay(@Param("picWay") String picWay,@Param("customerId") int customerId);
+    @Update("update customers set picUrl=#{picUrl} where customerId=#{customerId}")
+    int updatePicUrl(@Param("picUrl") String picUrl);
 
-    @Select("select picWay from customers where customerId=#{customerId}")
-    String getPicWay(@Param("customerId")int customerId);
 }

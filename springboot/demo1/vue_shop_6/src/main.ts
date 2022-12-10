@@ -4,8 +4,11 @@ import App from './App.vue'
 import router from './router'
 // 使用ElementPlus
 import ElementPlus from 'element-plus'
+import 'element-ui/lib/theme-chalk/index.css'
 import 'element-plus/dist/index.css'
 import axios from "axios";
+import JwChat from 'jwchat';
+import TDesigner from 'tdesign-vue-next'
 
 // 导入字体图标
 import './assets/icons/font_2cf2621a7by/iconfont.css'
@@ -29,4 +32,5 @@ axios.interceptors.request.use(
 const app = createApp(App)
 app.use(router)
 app.use(ElementPlus)
+app.use(JwChat)
 app.mount('#app')

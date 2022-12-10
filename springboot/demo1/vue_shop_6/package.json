@@ -7,21 +7,30 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.0.9",
+    "@element-plus/icons-vue": "^2.0.10",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "element-plus": "^2.2.17",
+    "infinite-loading-vue3": "^1.0.1",
+    "jwchat": "^1.0.11",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
+    "qs": "^6.11.0",
+    "tdesign-vue-next": "^0.24.7",
+    "vite": "^3.2.4",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.0.3",
+    "vue3-infinite-loading": "^1.0.0"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.14",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-typescript": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
-    "typescript": "~4.5.5"
+    "typescript": "~4.5.5",
+    "unplugin-auto-import": "^0.11.4",
+    "unplugin-vue-components": "^0.22.9"
   }
 }

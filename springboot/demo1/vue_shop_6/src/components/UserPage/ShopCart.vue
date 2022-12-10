@@ -2,55 +2,6 @@
   <div class="common-layout">
     <link href="../../assets/icons/font_2cf2621a7by/iconfont.css"> 
     <el-container class="std_container">
-      <el-header>
-        <el-row type="flex" align="middle">
-          <el-col :span="3" class="logo_box">
-            <img src="../../assets/computer_logo.png" alt="" class="logo"  @click="goHome">
-          </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons" @click="goMShopPage">
-            最新热卖
-          </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons">
-            轻薄本
-          </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons">
-            游戏本
-          </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons">
-            全能本
-          </el-col>
-          <el-col :span="2" :offset="1" class="header_bottons">
-            电脑配件
-          </el-col>
-          <el-col :span="2" :offset="4">
-            <el-dropdown trigger="click"  @visible-change="blurThePage">
-              <span class="el-dropdown-link header_bottons">
-                我的账户<el-icon class="el-icon--right"><arrow-down /></el-icon>
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="goLogin" v-if="!haveToken">
-                    <el-icon class="iconfont icon-yonghu_user"></el-icon>
-                    登陆账户
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="goRegister" v-if="!haveToken">
-                    <el-icon class="iconfont icon-tianjia_add"></el-icon>
-                    注册账户
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="goUserPage" v-if="haveToken">
-                    <el-icon class="iconfont icon-yinliu_drainage"></el-icon>
-                    个人页面
-                  </el-dropdown-item>
-                  <el-dropdown-item v-if="haveToken">
-                    <el-icon class="iconfont icon-tuichu_exit"></el-icon>
-                    退出登陆
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </el-col>
-        </el-row>
-      </el-header>
       <el-container>
         <!--侧边导航栏-->
         <el-aside width="500px">
@@ -99,37 +50,56 @@
         </el-aside>
 
         <!-- 主体 -->
-        <el-main>
-          <el-row class="main-head-row">
-            <el-col>
+        <el-main style='overflow: scroll;overflow-y:hidden;overflow-x:hidden'>
+          <div class="main-head-row">
+            <span class="head-title">
               购物车
-            </el-col>
-          </el-row>
-          <div class="productBox">
-
-            <div
-                v-for="(o) in todos"
-                :key="o.productId"
-                class="productItem"
-            >
-              <img
-                  src="https://ts1.cn.mm.bing.net/th/id/R-C.f18413decc8ddfb116d1e9a00c483ec8?rik=dqtjG59Oy%2fN1CQ&riu=http%3a%2f%2fwww.somode.com%2fuploadimg%2fimage%2f20200430%2f20200430163352_10974.jpg&ehk=loh76OZm43wsrfa6TVQwGOZSiTCXH3%2foTeCEHoOZn00%3d&risl=&pid=ImgRaw&r=0"
-                  class="image"
-              />
-
-              <span>{{o.productName}}</span>
-              <time class="time">{{ o.brand }}</time>
-              <span>￥{{o.price}}</span>
-              <span class="product_num">
-                <el-button class="button" type="primary" @click="minusProduct(o)">-</el-button>
-                <span>
-                {{o.num}}
-                </span>
-                <el-button class="button" type="primary" @click="plusProduct(o)">+</el-button>
-              </span>
-              <el-button class="button" type="primary" @click="removeProduct(o)">移除</el-button>
-            </div>
+            </span>
+            <span class="countCart">
+              全部商品{{cartLength.cartLen}}
+            </span>
           </div>
+          <div class="sub-head-row">
+            <span>
+              购物车
+            </span>
+          </div>
+          <el-scrollbar max-height="620px">
+            <div class="productBox">
+              <div
+                  v-for="(o) in todos"
+                  :key="o.productId"
+                  class="productItem"
+              >
+                <span style="width: 50px" class="checkbox">
+                  <input type="checkbox" v-model="o.isSelect" @click="selectCart(o)">
+                </span>
+                <span>
+                  <img
+                      :src="o.pictureSrc"
+                      class="image"
+                      alt="暂无图片"
+                      style="cursor: pointer"
+                  />
+                </span>
+
+                <span>{{o.productName}}</span>
+                <span>{{ o.brand }}</span>
+                <span>￥{{o.price}}</span>
+                <span class="product_num">
+                  <el-button class="button" type="primary" @click="minusProduct(o)">-</el-button>
+                  <span>
+                  {{o.num}}
+                  </span>
+                  <el-button class="button" type="primary" @click="plusProduct(o)">+</el-button>
+                </span>
+                <span>￥{{o.price*o.num}}</span>
+                <span>
+                  <el-button class="button" type="primary" @click="removeProduct(o)">移除</el-button>
+                </span>
+              </div>
+            </div>
+          </el-scrollbar>
 
         </el-main>
       </el-container>
@@ -151,32 +121,12 @@
     Plus,
   } from '@element-plus/icons-vue'
   import { useRouter } from 'vue-router';
-  import { ref } from 'vue';
+  import {reactive, ref} from 'vue';
   import axios from "axios";
   import qs from 'qs';
   import { goMShopPage } from  './router_pages';
 
 	const router = useRouter()
-	function goLogin() {
-		router.push({
-			path: '/login'
-		})
-	}
-  function goRegister() {
-		router.push({
-			path: '/register'
-		})
-	}
-  function goUserPage() {
-		router.push({
-			path: '/userPage'
-		})
-	}
-  function goHome() {
-    router.push({
-			path: '/home'
-		})
-  }
   function goOverView() {
     router.push({
 			path: '/userPage'
@@ -229,8 +179,33 @@
 	}
   // 购物车展示
   const todos = ref()
+  // 获取购物车初始信息
+  let data = {
+    customerId: localStorage.getItem('customerId'),
+  }
+  console.log(data.customerId);
+  console.log(todos)
+  // 声明为const的reactive对象可以实时显示更改
+  const cartLength = reactive({
+    cartLen: 0,
+  });
+  axios.post("http://localhost:9090/cart", data).then(res=>{
+    console.log(res.data);
+    todos.value=res.data;
+    console.log(todos.value);
+    // 计算购物车商品数量
+    for (const i in todos.value) {
+      // 解析商品图片的地址
+      todos.value[i].pictureSrc = require('../../assets/pictures/products/'+todos.value[i].picture);
+      cartLength.cartLen++;
+    }
+    console.log(cartLength.cartLen);
+    console.log(todos.value);
+  })
+
+  // 从购物车移除
   function removeProduct(o: any) {
-    console.log(o.productId);
+    console.log("removing: ", o.productId);
     let remove_data = {
       "customerId": localStorage.getItem('customerId'),
       "productId": o.productId,
@@ -241,26 +216,32 @@
         let data = {
           "customerId": localStorage.getItem('customerId'),
         }
+        cartLength.cartLen--;
         console.log(data.customerId);
         axios.post("http://localhost:9090/cart", data).then(res=>{
           console.log(res.data);
           todos.value=res.data;
           console.log(todos.value);
+          for (const i in todos.value) {
+            // 解析商品图片的地址
+            todos.value[i].pictureSrc = require('../../assets/pictures/products/'+todos.value[i].picture);
+          }
         })
       }
     })
   }
 
-  let data = {
-    customerId: localStorage.getItem('customerId'),
+  // 勾选商品
+  function selectCart(o: any){
+    console.log("selecting: ", o.productId);
+    let select_data = {
+      "customerId": localStorage.getItem('customerId'),
+      "productId": o.productId,
+    }
+    axios.post("http://localhost:9090/cart/checkbox", qs.stringify(select_data)).then(res_select=>{
+      console.log(res_select.data);
+    })
   }
-  console.log(data.customerId);
-  console.log(todos)
-  axios.post("http://localhost:9090/cart", data).then(res=>{
-    console.log(res.data);
-    todos.value=res.data;
-    console.log(todos.value);
-  })
 
   // 加减产品
   function minusProduct(o: any){
@@ -299,67 +280,13 @@
   height: 100%;
 }
 .std_container {
-  height: 1500px;
+  height: 1200px;
   //background: url('../../assets/pictures/background1.jpg');
   //background-image: linear-gradient(to bottom right, #3d50fc, #7AFFAF);
   background-color: #fff;
   background-position: center;
   background-repeat: repeat;
 }
-
-// 左上角logo
-.logo {
-  height: 100px;
-  width: 200px;
-}
-.logo_box {
-
-  margin-left: 0 !important;
-}
-// 标题 ******************************************
-.el-header {
-  height: 55px !important;
-  width: 100%;
-  box-shadow: 0 0 10px #ddd;
-  background-color: rgb(255, 255, 255);
-
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  border-bottom-color: rgb(222, 222, 222);
-  .el-row {
-    height: 100%;
-    position: relative;
-    top: -25px;
-    .el-col {
-      text-align: center;
-      font-weight:bold;
-      font-size: 20px;
-    }
-  }
-}
-// 标题按钮样式
-.header_bottons {
-  color: rgb(114, 114, 114);
-  transition:color 0.6s linear // 渐变颜色
-}
-.header_bottons:hover {
-  color: rgb(0, 0, 0);
-}
-
-// 下拉菜单
-.el-dropdown-menu {
-  width: 200px;
-  .el-dropdown-item {
-    font-size: 100px;
-    height: 100px;
-  }
-}
-.el-dropdown-link {
-  color: rgb(114, 114, 114);
-  font-weight:bold;
-  font-size: 20px;
-}
-
 
 // 主体
 .el-main {
@@ -368,12 +295,33 @@
   padding: 0;
 }
 .main-head-row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+
   margin-top: 80px;
-  margin-bottom: 50px;
-  .el-col {
+  margin-bottom: 20px;
+  .head-title {
     color: rgb(0, 0, 0);
     font-size: 30px;
   }
+  .countCart {
+    margin-left: 20px;
+    color: #ff0000;
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
+.sub-head-row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+
+  margin-top: 20px;
+  margin-bottom: 20px;
+
 }
 .content-1 {
   height: 350px;
@@ -396,21 +344,26 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     //border: 1px solid #cccccc;
-    .image {
-      height: 100px;
-      width: 100px;
-      display: inline-block;
+    span {
+      width: 200px;
+      .image {
+        height: 100px;
+        width: 100px;
+        display: inline-block;
+      }
     }
+
   }
   .productItem:hover {
     box-shadow: 0 0 10px #cccccc;
   }
   .product_num {
+    width: 200px;
     span {
       margin: 0 10px;
     }
-
   }
 }
 
